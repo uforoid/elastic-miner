@@ -1,8 +1,6 @@
 from __future__ import absolute_import
 
 import logging
-import requests
-import bs4  # we use bs4 to parse the HTML page
 from elasticsearch import Elasticsearch
 
 from minemeld.ft.basepoller import BasePollerFT
@@ -67,7 +65,7 @@ class Miner(BasePollerFT):
 
     def _build_iterator(self, now):
         try:
-            es_docs = self.es.search(index=self.index_pattern, body=query, request_timeout=60)['hits']['hits']
+            es_docs = self.es.search(index=self.index_pattern, body=query, request_timeout=60, size=1000000)['hits']['hits']
         except:
             LOG.debug('cannot get results from elasticsearch')
             raise
