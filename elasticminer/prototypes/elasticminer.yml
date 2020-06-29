@@ -1,0 +1,28 @@
+url: https://github.com/uforoid/elastic-miner
+description: >
+  Extension for elasticsearch
+
+prototypes:
+  eevblog:
+    author: Ugo Vergallo
+    class: elasticminer.Miner
+    development_status: EXPERIMENTAL
+    node_type: miner
+    indicator_types:
+      - IPv4
+    tags:
+      - extension
+      - elasticminer
+    description: >
+      test prototype for elastic.Miner, mines elasticsearch
+    config:
+      index_pattern: index
+      elastic_ips: 8.8.8.8
+      user: user
+      password: password
+      age_out:
+        sudden_death: true
+        default: null
+      # flag indicators with share level green
+      attributes:
+        share_level: green

@@ -1,0 +1,16 @@
+{
+    "version": "0.5",
+    "name": "elastic-miner",
+    "author": "Ugo Vergallo",
+    "author_email": "ugo.vergallo@cyberoo.com",
+    "description": "Sample MineMeld node extension for mining Elasticsearch",
+    "entry_points": {
+        "minemeld_nodes": {
+            "elasticminer.Miner": "elasticminer.node:Miner"
+        },
+        "minemeld_prototypes": {
+            "elasticminer.prototypes": "elasticminer:prototypes"
+        }
+    },
+    "manifest_version": 0
+}
