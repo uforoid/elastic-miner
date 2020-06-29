@@ -3,7 +3,7 @@ description: >
   Extension for elasticsearch
 
 prototypes:
-  eevblog:
+  miner:
     author: Ugo Vergallo
     class: elasticminer.Miner
     development_status: EXPERIMENTAL
