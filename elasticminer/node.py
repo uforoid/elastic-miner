@@ -34,7 +34,7 @@ class Miner(BasePollerFT):
         returns = []
         for field, minemeld_type in self.fields:
             try:
-                indicator = eval(f"item['{field}']")
+                indicator = eval("item['{}']".format(field))
             except:
                 LOG.debug('error while reading ip for item {}'.format(item['_id']))
                 raise
