@@ -37,7 +37,7 @@ class Miner(BasePollerFT):
                 indicator = eval("item['{}']".format(field))
             except:
                 LOG.debug('error while reading ip for item {}'.format(item['_id']))
-                raise
+                continue
 
             if indicator is None:
                 LOG.error('%s - no data-context-item-id attribute', self.name)
