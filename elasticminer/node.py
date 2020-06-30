@@ -32,7 +32,7 @@ class Miner(BasePollerFT):
 
     def _process_item(self, item):
         returns = []
-        for field, minemeld_type in self.fields:
+        for field, minemeld_type in self.fields.items():
             try:
                 indicator = eval("item['{}']".format(field))
             except:
