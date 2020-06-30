@@ -41,7 +41,7 @@ class Miner(BasePollerFT):
 
             if indicator is None:
                 LOG.error('%s - no data-context-item-id attribute', self.name)
-                return []
+                continue
 
             value = {
                 'type': minemeld_type,
