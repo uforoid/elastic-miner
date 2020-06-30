@@ -17,12 +17,20 @@ prototypes:
       test prototype for elastic.Miner, mines elasticsearch
     config:
       index_pattern: index
-      elastic_ips: 8.8.8.8
+      polling_timeout: 60
       user: user
       password: password
+      fields:
+        event.dataset: IPv4
+        event.subdataset: IPv6
+      elastic_ips:
+        - 8.8.8.8:9200
+        - 8.8.4.4:9200
       age_out:
         sudden_death: true
         default: null
       # flag indicators with share level green
       attributes:
         share_level: green
+      query: >
+        { "query" }

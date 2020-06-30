@@ -7,28 +7,6 @@ from minemeld.ft.basepoller import BasePollerFT
 
 LOG = logging.getLogger(__name__)
 
-query = {
-    "query": {
-        "bool": {
-            "must": [
-                {
-                    "match": {
-                        "event.detail": "Sign-in was blocked because it came from an IP address with malicious activity."
-                    }
-                },
-                {
-                    "range": {
-                        "@timestamp": {
-                            "gte": "now-100d/d",
-                            "lte": "now"
-                        }
-                    }
-                }
-            ]
-        }
-    }
-}
-
 
 class Miner(BasePollerFT):
     def configure(self):
@@ -36,9 +14,16 @@ class Miner(BasePollerFT):
 
         self.polling_timeout = self.config.get('polling_timeout', 60)
 
-        self.index_pattern = self.config.get('index_pattern', 'ecs-office365-*')
+        self.index_pattern = self.config.get('index_pattern', 'index')
         if self.index_pattern is None:
             raise ValueError('%s - index pattern name is required' % self.name)
+
+        fields = self.config.get('fields', 'event.dataset')
+        self.query = self.config.get('query', '{query}')
+
+        self.fields = {}
+        for field in fields.keys():
+            self.fields["_source']['" + field.replace(".", "']['")] = fields[field]
 
         ips = self.config.get('elastic_ips', '8.8.8.8')
         user = self.config.get('user', 'user')
@@ -46,26 +31,29 @@ class Miner(BasePollerFT):
         self.es = Elasticsearch(ips, http_auth=(user, password), request_timeout=60)
 
     def _process_item(self, item):
-        try:
-            indicator = item['_source']['source']['ip']
-        except:
-            LOG.debug('error while reading ip for item {}'.format(item['_id']))
-            raise
+        returns = []
+        for field, minemeld_type in self.fields:
+            try:
+                indicator = eval(f"item['{field}']")
+            except:
+                LOG.debug('error while reading ip for item {}'.format(item['_id']))
+                raise
 
-        if indicator is None:
-            LOG.error('%s - no data-context-item-id attribute', self.name)
-            return []
+            if indicator is None:
+                LOG.error('%s - no data-context-item-id attribute', self.name)
+                return []
 
-        value = {
-            'type': 'IPv4',
-            'confidence': 100
-        }
+            value = {
+                'type': minemeld_type,
+                'confidence': 100
+            }
+            returns.append([indicator, value])
 
-        return [[indicator, value]]
+        return returns
 
     def _build_iterator(self, now):
         try:
-            es_docs = self.es.search(index=self.index_pattern, body=query, request_timeout=60, size=1000000)['hits']['hits']
+            es_docs = self.es.search(index=self.index_pattern, body=self.query, request_timeout=60, size=1000000)['hits']['hits']
         except:
             LOG.debug('cannot get results from elasticsearch')
             raise
