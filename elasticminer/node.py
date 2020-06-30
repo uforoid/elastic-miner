@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import logging
 from elasticsearch import Elasticsearch
+import re
 
 from minemeld.ft.basepoller import BasePollerFT
 
@@ -42,6 +43,12 @@ class Miner(BasePollerFT):
             if indicator is None:
                 LOG.error('%s - no data-context-item-id attribute', self.name)
                 continue
+
+            if 'IP' in minemeld_type:
+                if re.search('[a-zA-Z]', indicator):
+                    minemeld_type = 'IPv6'
+                else:
+                    minemeld_type = 'IPv4'
 
             value = {
                 'type': minemeld_type,
